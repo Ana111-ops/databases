@@ -153,40 +153,18 @@ int save_to_file(const Software* data, int count, const char* filename) {
 
 int load_from_file(Software** data, int* count, const char* filename) {
     FILE* f = fopen(filename, "r");
-
     fscanf(f, "%d", count);
-    if (*count <= 0) {
-        fclose(f);
-        return 0;
-    }
 
-    *data = realloc(*data, *count * sizeof(Software));
+    *data = realloc(*data, (*count) * sizeof(Software));
 
-    int c;
-    char temp[50];
-    while ((c = fgetc(f)) != '\n' && c != EOF);
     for (int i = 0; i < *count; i++) {
-        fgets((*data)[i].name, 50, f);
-        (*data)[i].name[strcspn((*data)[i].name, "\n")] = 0;
 
-        fgets(temp, 20, f); sscanf(temp, "%d", &(*data)[i].design_type);
+        fscanf(f, "%s %d %s %f %s %d",(*data)[i].name, &(*data)[i].design_type, (*data)[i].developer, &(*data)[i].price, (*data)[i].website, &(*data)[i].api_version);
 
-        fgets((*data)[i].developer, 50, f);
-        (*data)[i].developer[strcspn((*data)[i].developer, "\n")] = 0;
-
-        fgets(temp, 20, f); sscanf(temp, "%f", &(*data)[i].price);
-
-        fgets((*data)[i].website, 50, f);
-        (*data)[i].website[strcspn((*data)[i].website, "\n")] = 0;
-
-        fgets(temp, 20, f); sscanf(temp, "%d", &(*data)[i].api_version);
-
-        fgets(temp, 50, f);
-        sscanf(temp, "%d %d %d %d %d", &(*data)[i].formats[0], &(*data)[i].formats[1], &(*data)[i].formats[2], &(*data)[i].formats[3], &(*data)[i].formats[4]);
-
-        fgets(temp, 30, f);
-        sscanf(temp, "%d %d %d", &(*data)[i].requirements[0], &(*data)[i].requirements[1], &(*data)[i].requirements[2]);
+        for (int j = 0; j < 5; j++) fscanf(f, "%d", &(*data)[i].formats[j]);
+        for (int j = 0; j < 3; j++) fscanf(f, "%d", &(*data)[i].requirements[j]);
     }
+
     fclose(f);
     return 1;
 }
