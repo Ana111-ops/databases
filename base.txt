@@ -1,0 +1,25 @@
+3
+Canva
+0
+Canva
+12.99
+canva.com
+1
+0 1 2 3 4
+1 0 2
+Figma
+1
+Figma
+0.00
+figma.com
+2
+1 2 3 4 0
+0 1 2
+Canva
+0
+Canva
+12.99
+canva.com
+1
+0 1 2 3 4
+1 0 2
