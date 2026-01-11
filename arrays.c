@@ -137,19 +137,27 @@ int generate_test(Software* data, int count) {
 
 int save_to_file(const Software* data, int count, const char* filename) {
     FILE* f = fopen(filename, "w");
+    if (f == NULL) return 0;
+
     fprintf(f, "%d\n", count);
     for (int i = 0; i < count; i++) {
         fprintf(f, "%s\n%d\n%s\n%.2f\n%s\n%d\n",
             data[i].name, data[i].design_type, data[i].developer,
             data[i].price, data[i].website, data[i].api_version);
-        for (int j = 0; j < 5; j++) fprintf(f, "%d ", (int)data[i].formats[j]);
+        for (int j = 0; j < 5; j++) {
+            fprintf(f, "%d ", data[i].formats[j]);
+        }
         fprintf(f, "\n");
-        for (int j = 0; j < 3; j++) fprintf(f, "%d ", (int)data[i].requirements[j]);
+
+        for (int j = 0; j < 3; j++) {
+            fprintf(f, "%d ", data[i].requirements[j]);
+        }
         fprintf(f, "\n");
     }
     fclose(f);
     return 1;
 }
+
 
 int load_from_file(Software** data, int* count, const char* filename) {
     FILE* f = fopen(filename, "r");
@@ -188,29 +196,31 @@ int load_from_file(Software** data, int* count, const char* filename) {
         fgets(temp, sizeof(temp), f);
         sscanf(temp, "%d", &(*data)[i].api_version);
 
-        fgets(temp, sizeof(temp), f);
-        sscanf(temp, "%d %d %d %d %d", &(*data)[i].formats[0], &(*data)[i].formats[1], &(*data)[i].formats[2], &(*data)[i].formats[3], &(*data)[i].formats[4]);
+        for (int j = 0; j < 5; j++) {
+            fscanf(f, "%d",&(*data)[i].formats[j]);
+        }
+        fgetc(f);  
 
-        fgets(temp, sizeof(temp), f);
-        sscanf(temp, "%d %d %d", &(*data)[i].requirements[0], &(*data)[i].requirements[1], &(*data)[i].requirements[2]);
+        for (int j = 0; j < 3; j++) {
+            fscanf(f, "%d", &(*data)[i].requirements[j]);
+        }
+        fgetc(f);
     }
     fclose(f);
     return 1;
 }
 Software* add_software(Software* data, int* count) {
-    (*count)++;
-    Software* new_data = realloc(data, *count * sizeof(Software));
-    if (new_data == NULL) {
-        (*count)--;
-        printf("Ошибка выделения памяти\n");
-        return data;
-    }
-    data = new_data;
+    (*count)++;  
 
-    memset(&data[*count - 1], 0, sizeof(Software));
+    data = realloc(data, *count * sizeof(Software)); 
+    if (data == NULL) {  
+        (*count)--;     
+        return data;    
+    }
     input_software(&data[*count - 1]);
-    return data;
+    return data; 
 }
+
 
 int search_by_design(const Software* data, int count, int type) {
     int found = 0;
