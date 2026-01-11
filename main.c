@@ -60,7 +60,7 @@ int main() {
                 getchar();
                 search_by_design(data, count, type);
             }
-            else {
+            else if (choice == 2) {
                 printf("Макс цена: ");
                 float max_price;
                 scanf("%f", &max_price);
@@ -92,6 +92,7 @@ int main() {
             fgets(file_name, sizeof(file_name), stdin);
             file_name[strcspn(file_name, "\n")] = 0;
             save_to_file(data, count, file_name);
+            printf("Запись успешно сохранена!");
             break;
 
         case 7:

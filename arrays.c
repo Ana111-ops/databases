@@ -151,54 +151,52 @@ int save_to_file(const Software* data, int count, const char* filename) {
     return 1;
 }
 
-int load_from_file(Software** data, int* count, const char* filename) { 
+int load_from_file(Software** data, int* count, const char* filename) {
     FILE* f = fopen(filename, "r");
-    if (!f) {
-        printf("Файл %s не найден\n", filename);
+    if (f == NULL) {
+        printf("Файл не найден\n");
         return 0;
     }
 
-    if (fscanf(f, "%d", count) != 1 || *count <= 0) {
-        fclose(f);
-        return 0;
-    }
+    fscanf(f, "%d", count);
 
     *data = realloc(*data, *count * sizeof(Software));
-    if (!*data) {
+    if (*data == NULL) {
         fclose(f);
         return 0;
     }
-
     int c;
     char temp[50];
-    while ((c = fgetc(f)) != '\n' && c != EOF);
+    fgets(temp, sizeof(temp), f);
 
     for (int i = 0; i < *count; i++) {
-        fgets((*data)[i].name, 50, f);
+        fgets((*data)[i].name, sizeof((*data)[i].name), f);
         (*data)[i].name[strcspn((*data)[i].name, "\n")] = 0;
 
-        fgets(temp, 20, f); sscanf(temp, "%d", &(*data)[i].design_type);
+        fgets(temp, sizeof(temp), f);
+        sscanf(temp, "%d", &(*data)[i].design_type);
 
-        fgets((*data)[i].developer, 50, f);
+        fgets((*data)[i].developer, sizeof((*data)[i].developer), f);
         (*data)[i].developer[strcspn((*data)[i].developer, "\n")] = 0;
 
-        fgets(temp, 20, f); sscanf(temp, "%f", &(*data)[i].price);
+        fgets(temp, sizeof(temp), f);
+        sscanf(temp, "%f", &(*data)[i].price);
 
-        fgets((*data)[i].website, 50, f);
+        fgets((*data)[i].website, sizeof((*data)[i].website), f);
         (*data)[i].website[strcspn((*data)[i].website, "\n")] = 0;
 
-        fgets(temp, 20, f); sscanf(temp, "%d", &(*data)[i].api_version);
+        fgets(temp, sizeof(temp), f);
+        sscanf(temp, "%d", &(*data)[i].api_version);
 
-        fgets(temp, 50, f);
+        fgets(temp, sizeof(temp), f);
         sscanf(temp, "%d %d %d %d %d", &(*data)[i].formats[0], &(*data)[i].formats[1], &(*data)[i].formats[2], &(*data)[i].formats[3], &(*data)[i].formats[4]);
 
-        fgets(temp, 30, f);
+        fgets(temp, sizeof(temp), f);
         sscanf(temp, "%d %d %d", &(*data)[i].requirements[0], &(*data)[i].requirements[1], &(*data)[i].requirements[2]);
     }
     fclose(f);
     return 1;
 }
-
 Software* add_software(Software* data, int* count) {
     (*count)++;
     Software* new_data = realloc(data, *count * sizeof(Software));
